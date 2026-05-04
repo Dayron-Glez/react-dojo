@@ -13,6 +13,7 @@ import { useMemoFilter } from "@/content/exercises/use-memo-filter"
 import { transitionTabs } from "@/content/exercises/transition-tabs"
 import { optimisticLike } from "@/content/exercises/optimistic-like"
 import { actionForm } from "@/content/exercises/action-form"
+import { compoundAccordion } from "@/content/exercises/compound-accordion"
 import type { Exercise } from "@/content/exercises/types"
 
 export type { Exercise, Difficulty } from "@/content/exercises/types"
@@ -1622,6 +1623,170 @@ export default function App() {
 `,
     },
   },
+  "compound-accordion": {
+    title: "Accordion with Compound Components",
+    lede: "You have an Accordion that receives all its configuration as props (items, activeId, onToggle). Refactor it to the Compound Components pattern: state lives inside Accordion and the subcomponents Accordion.Item, Accordion.Trigger and Accordion.Panel communicate through Context without receiving explicit props between them.",
+    objectives: [
+      "Create a private AccordionCtx context with { active, toggle }",
+      "Accordion manages state with useState and provides the context",
+      "Accordion.Item provides its own id to a child context (ItemCtx) via a second Provider",
+      "Accordion.Trigger reads the item id from ItemCtx and calls toggle on click",
+      "Accordion.Panel only renders when its id matches active",
+      "App uses the composed API without passing props between subcomponents",
+    ],
+    hint: "You need two levels of context: one global (which item is open) and one per item (what the id of this item is). That way Trigger and Panel know which item they belong to without receiving it as a prop.",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+// Accordion with props — refactor to the Compound Components pattern
+function Accordion({ items }) {
+  const [active, setActive] = useState(null);
+
+  function toggle(id) {
+    setActive((prev) => (prev === id ? null : id));
+  }
+
+  return (
+    <div style={{ fontFamily: "system-ui", maxWidth: 480 }}>
+      {items.map((item) => (
+        <div key={item.id} style={{ borderBottom: "1px solid var(--line-strong)" }}>
+          <button
+            onClick={() => toggle(item.id)}
+            style={{
+              width: "100%", textAlign: "left", padding: "12px 8px",
+              background: "transparent", border: "none", cursor: "pointer",
+              fontWeight: 600, fontSize: 15, color: "var(--fg)",
+              display: "flex", justifyContent: "space-between",
+            }}
+          >
+            {item.title}
+            <span>{active === item.id ? "▲" : "▼"}</span>
+          </button>
+          {active === item.id && (
+            <p style={{ margin: 0, padding: "0 8px 12px", color: "var(--fg-muted)", fontSize: 14 }}>
+              {item.content}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const items = [
+  { id: "1", title: "What is React?", content: "A JavaScript library for building user interfaces based on components." },
+  { id: "2", title: "What is a hook?", content: "A function that starts with 'use' and allows using React features from functional components." },
+  { id: "3", title: "What is the Virtual DOM?", content: "An in-memory representation of the real DOM that React uses to calculate the minimum necessary changes." },
+];
+
+export default function App() {
+  return <Accordion items={items} />;
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { createContext, useContext, useState } from "react";
+
+// Global context: which item is open
+const AccordionCtx = createContext(null);
+// Per-item context: what the id of this item is
+const ItemCtx = createContext(null);
+
+function useAccordion() {
+  const ctx = useContext(AccordionCtx);
+  if (!ctx) throw new Error("Must be used inside <Accordion>");
+  return ctx;
+}
+
+function useItem() {
+  const id = useContext(ItemCtx);
+  if (id === null) throw new Error("Must be used inside <Accordion.Item>");
+  return id;
+}
+
+function Accordion({ children }) {
+  const [active, setActive] = useState(null);
+  function toggle(id) {
+    setActive((prev) => (prev === id ? null : id));
+  }
+  return (
+    <AccordionCtx.Provider value={{ active, toggle }}>
+      <div style={{ fontFamily: "system-ui", maxWidth: 480 }}>{children}</div>
+    </AccordionCtx.Provider>
+  );
+}
+
+function AccordionItem({ id, children }) {
+  return (
+    <ItemCtx.Provider value={id}>
+      <div style={{ borderBottom: "1px solid var(--line-strong)" }}>{children}</div>
+    </ItemCtx.Provider>
+  );
+}
+
+function AccordionTrigger({ children }) {
+  const { active, toggle } = useAccordion();
+  const id = useItem();
+  const isOpen = active === id;
+  return (
+    <button
+      onClick={() => toggle(id)}
+      style={{
+        width: "100%", textAlign: "left", padding: "12px 8px",
+        background: "transparent", border: "none", cursor: "pointer",
+        fontWeight: 600, fontSize: 15, color: "var(--fg)",
+        display: "flex", justifyContent: "space-between",
+      }}
+    >
+      {children}
+      <span>{isOpen ? "▲" : "▼"}</span>
+    </button>
+  );
+}
+
+function AccordionPanel({ children }) {
+  const { active } = useAccordion();
+  const id = useItem();
+  if (active !== id) return null;
+  return (
+    <p style={{ margin: 0, padding: "0 8px 12px", color: "var(--fg-muted)", fontSize: 14 }}>
+      {children}
+    </p>
+  );
+}
+
+// Subcomponents attached as static properties
+Accordion.Item = AccordionItem;
+Accordion.Trigger = AccordionTrigger;
+Accordion.Panel = AccordionPanel;
+
+export default function App() {
+  return (
+    <Accordion>
+      <Accordion.Item id="1">
+        <Accordion.Trigger>What is React?</Accordion.Trigger>
+        <Accordion.Panel>
+          A JavaScript library for building user interfaces based on components.
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item id="2">
+        <Accordion.Trigger>What is a hook?</Accordion.Trigger>
+        <Accordion.Panel>
+          A function that starts with 'use' and allows using React features from functional components.
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item id="3">
+        <Accordion.Trigger>What is the Virtual DOM?</Accordion.Trigger>
+        <Accordion.Panel>
+          An in-memory representation of the real DOM that React uses to calculate the minimum necessary changes.
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+}
+`,
+    },
+  },
   "action-form": {
     title: "Form with useActionState",
     lede: "A registration form that currently uses useState + onSubmit. Migrate the logic to useActionState to centralize state, validations, and pending in one place — without extra useState.",
@@ -1758,6 +1923,7 @@ export const allExercises: Exercise[] = [
   transitionTabs,
   optimisticLike,
   actionForm,
+  compoundAccordion,
 ].map(applyOverrides)
 
 export const exerciseIndex: Record<string, Exercise> = Object.fromEntries(
