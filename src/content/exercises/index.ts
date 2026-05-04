@@ -13,6 +13,7 @@ import { useMemoFilter } from "./use-memo-filter"
 import { transitionTabs } from "./transition-tabs"
 import { optimisticLike } from "./optimistic-like"
 import { actionForm } from "./action-form"
+import { compoundAccordion } from "./compound-accordion"
 import type { Exercise } from "./types"
 
 export type { Exercise, Difficulty } from "./types"
@@ -33,6 +34,7 @@ export const allExercises: Exercise[] = [
   transitionTabs,
   optimisticLike,
   actionForm,
+  compoundAccordion,
 ]
 
 export const exerciseIndex: Record<string, Exercise> = Object.fromEntries(
