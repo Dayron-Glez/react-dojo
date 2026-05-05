@@ -1333,6 +1333,146 @@ const contextoQuestions: QuizQuestion[] = [
   },
 ]
 
+const compoundComponentsQuestions: QuizQuestion[] = [
+  {
+    id: "cc-1",
+    question: "¿Qué problema resuelve principalmente el patrón Compound Components?",
+    options: [
+      "Eliminar el uso de useState en componentes hijos",
+      "Evitar prop drilling y permitir APIs flexibles para el consumidor",
+      "Mejorar el rendimiento evitando re-renders innecesarios",
+      "Separar la lógica de negocio de la vista",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Con un componente clásico basado en props (items={[...]}), el consumidor solo puede pasar datos pero no controlar la estructura. Compound Components transfieren esa flexibilidad al consumidor: puede decidir el orden, el contenido y el layout de cada subcomponente sin que el autor tenga que anticiparlo.",
+  },
+  {
+    id: "cc-2",
+    question:
+      "¿Cómo se comunican los subcomponentes con el padre en el patrón Compound Components?",
+    options: [
+      "A través de props explícitas pasadas de padre a hijo",
+      "Usando eventos DOM nativos con dispatchEvent",
+      "A través de un Context privado que el padre provee",
+      "Mediante variables globales del módulo",
+    ],
+    correctIndex: 2,
+    explanation:
+      "El padre crea un Context y envuelve a sus hijos en un Provider con el estado compartido. Los subcomponentes llaman a useContext para leerlo sin necesitar props explícitas. El Context es privado — solo los subcomponentes que forman parte de la API lo consumen.",
+  },
+  {
+    id: "cc-3",
+    question: "¿Cómo se adjuntan habitualmente los subcomponentes al componente padre?",
+    options: [
+      "Se exportan como componentes independientes sin relación con el padre",
+      "Se registran en un array interno de children permitidos",
+      "Se añaden como propiedades estáticas del padre (Accordion.Item, Tabs.Panel)",
+      "Se envuelven en un HOC que los conecta automáticamente al padre",
+    ],
+    correctIndex: 2,
+    explanation:
+      "La convención es adjuntar los subcomponentes como propiedades estáticas: Accordion.Item = AccordionItem. Esto agrupa visualmente la API, comunica al consumidor que esos componentes están diseñados para usarse juntos y permite el autocompletado del IDE.",
+  },
+  {
+    id: "cc-4",
+    question:
+      "¿Qué ventaja tiene lanzar un error en el hook personalizado cuando se usa fuera del Provider?",
+    options: [
+      "Mejora el rendimiento al detectar errores antes del render",
+      "Proporciona un mensaje claro que ayuda al desarrollador a encontrar el problema rápidamente",
+      "Evita que React muestre el error boundary más cercano",
+      "Es obligatorio para que Context funcione correctamente",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Sin la comprobación if (!ctx) throw new Error('...'), si alguien usa <Accordion.Trigger> fuera de <Accordion>, el código falla con un error críptico de null reference. Lanzar 'useAccordion debe usarse dentro de <Accordion>' convierte un bug difícil de rastrear en un error inmediatamente accionable.",
+  },
+  {
+    id: "cc-5",
+    question:
+      "En un Accordion con Compound Components, ¿para qué se necesita un segundo nivel de Context (ItemCtx)?",
+    options: [
+      "Para mejorar el rendimiento evitando re-renders del árbol completo",
+      "Para que Trigger y Panel conozcan su id sin recibir props explícitas",
+      "Para separar el estado del Accordion en múltiples stores independientes",
+      "Para permitir que cada item tenga su propio estado abierto/cerrado independiente",
+    ],
+    correctIndex: 1,
+    explanation:
+      "AccordionCtx provee el estado global (qué item está activo, función toggle). ItemCtx provee el id del item actual a sus hijos. Sin ItemCtx, Trigger y Panel tendrían que recibir el id como prop, rompiendo la API sin props. Dos niveles de contexto, cada uno con una responsabilidad clara.",
+  },
+  {
+    id: "cc-6",
+    question:
+      "¿Cuál es la diferencia principal entre Compound Components y pasar la configuración como items={[...]} props?",
+    options: [
+      "Los Compound Components son más performantes porque evitan renders adicionales",
+      "Los Compound Components permiten al consumidor controlar el layout y el contenido de cada parte",
+      "Las props son menos verbosas y más mantenibles a largo plazo",
+      "Los Compound Components requieren menos código en la implementación",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Con items={[...]} la estructura está fijada por el autor del componente. Con Compound Components, el consumidor decide el orden, qué renderizar dentro de cada subcomponente, e incluso puede mezclar con otros elementos. La flexibilidad pasa del autor al consumidor.",
+  },
+  {
+    id: "cc-7",
+    question:
+      "¿Qué ocurre si se omite la comprobación if (!ctx) throw new Error(...) en el hook personalizado?",
+    options: [
+      "TypeScript lanza un error de compilación antes de ejecutar el código",
+      "React muestra automáticamente el error boundary más cercano con un mensaje útil",
+      "El componente falla con un error críptico de null reference en lugar de un mensaje claro",
+      "Context devuelve un objeto vacío por defecto y el componente no renderiza",
+    ],
+    correctIndex: 2,
+    explanation:
+      "Sin la validación, ctx es null y el primer acceso a ctx.active lanza Cannot read properties of null — un error que no indica dónde está el problema real. La comprobación explícita transforma ese error críptico en un mensaje accionable desde el primer momento.",
+  },
+  {
+    id: "cc-8",
+    question:
+      "¿Cuál de los siguientes es un ejemplo real del patrón Compound Components en HTML nativo?",
+    options: [
+      "<div className='container'>",
+      "<form onSubmit={handler}>",
+      "<select><option value='1'>Uno</option></select>",
+      "<input type='text' />",
+    ],
+    correctIndex: 2,
+    explanation:
+      "select + option es el Compound Component original del HTML. select gestiona el valor seleccionado; option es el subcomponente que se comunica implícitamente con su padre. Librerías como Radix UI, React Aria y Headless UI siguen exactamente este mismo patrón.",
+  },
+  {
+    id: "cc-9",
+    question: "¿En qué se diferencia el patrón Compound Components del patrón Render Props?",
+    options: [
+      "Render Props usa Context y Compound Components usa props directas",
+      "Compound Components usa JSX declarativo; Render Props expone lógica a través de una función",
+      "Compound Components solo sirve para componentes de UI; Render Props para lógica de negocio",
+      "No hay diferencias relevantes, son patrones completamente equivalentes",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Ambos comparten estado con el consumidor, pero de distinta forma. Render Props: <Mouse render={(pos) => <Cat {...pos} />} — flexible pero verboso. Compound Components: <Tabs><Tabs.List>...</Tabs.List></Tabs> — declarativo, legible y con estructura JSX natural. Compound Components suele preferirse cuando el consumidor controla el layout.",
+  },
+  {
+    id: "cc-10",
+    question:
+      "¿Por qué el Context usado en Compound Components generalmente es privado (no exportado)?",
+    options: [
+      "Por limitaciones técnicas de React que impiden exportarlo desde un módulo",
+      "Para evitar que el consumidor acople su código a detalles internos de implementación",
+      "Porque exportar Context causa memory leaks en producción",
+      "Por requisitos de rendimiento del React Compiler",
+    ],
+    correctIndex: 1,
+    explanation:
+      "El Context es un detalle de implementación. Exportarlo permitiría que el consumidor lo usara directamente, acoplando su código a la estructura interna. Si el autor reestructura el componente (por ejemplo, dividiendo un Context en dos), rompería todo el código consumidor. Exportar solo el hook personalizado (useAccordion) mantiene una API pública limpia y estable.",
+  },
+]
+
 export const allQuizzes: Quiz[] = [
   {
     id: "fundamentos",
@@ -1403,6 +1543,13 @@ export const allQuizzes: Quiz[] = [
     description: "Concurrent React, Server Components, React 19 y arquitectura profunda",
     difficulty: "advanced",
     questions: avanzadoQuestions,
+  },
+  {
+    id: "compound-components",
+    label: "Compound Components",
+    description: "Patrón Compound Components: Context privado, subcomponentes y APIs flexibles",
+    difficulty: "advanced",
+    questions: compoundComponentsQuestions,
   },
 ]
 
