@@ -1312,6 +1312,145 @@ const contextQuestions: QuizQuestion[] = [
   },
 ]
 
+const compoundComponentsQuestions: QuizQuestion[] = [
+  {
+    id: "cc-1",
+    question: "What problem does the Compound Components pattern mainly solve?",
+    options: [
+      "Eliminating the use of useState in child components",
+      "Avoiding prop drilling and enabling flexible APIs for the consumer",
+      "Improving performance by preventing unnecessary re-renders",
+      "Separating business logic from the view",
+    ],
+    correctIndex: 1,
+    explanation:
+      "With a classic props-based component (items={[...]}), the consumer can only pass data but cannot control the structure. Compound Components transfer that flexibility to the consumer: they can decide the order, the content, and the layout of each subcomponent without the author having to anticipate it.",
+  },
+  {
+    id: "cc-2",
+    question:
+      "How do subcomponents communicate with the parent in the Compound Components pattern?",
+    options: [
+      "Through explicit props passed from parent to child",
+      "Using native DOM events with dispatchEvent",
+      "Through a private Context provided by the parent",
+      "Via module-level global variables",
+    ],
+    correctIndex: 2,
+    explanation:
+      "The parent creates a Context and wraps its children in a Provider with shared state. Subcomponents call useContext to read it without needing explicit props. The Context is private — only the subcomponents that are part of the API consume it.",
+  },
+  {
+    id: "cc-3",
+    question: "How are subcomponents typically attached to the parent component?",
+    options: [
+      "They are exported as independent components with no relation to the parent",
+      "They are registered in an internal array of allowed children",
+      "They are added as static properties on the parent (Accordion.Item, Tabs.Panel)",
+      "They are wrapped in a HOC that connects them to the parent automatically",
+    ],
+    correctIndex: 2,
+    explanation:
+      "The convention is to attach subcomponents as static properties: Accordion.Item = AccordionItem. This visually groups the API, signals to the consumer that those components are designed to be used together, and enables IDE autocompletion.",
+  },
+  {
+    id: "cc-4",
+    question:
+      "What is the advantage of throwing an error in the custom hook when used outside the Provider?",
+    options: [
+      "It improves performance by detecting errors before render",
+      "It provides a clear message that helps the developer find the problem quickly",
+      "It prevents React from displaying the nearest error boundary",
+      "It is required for Context to work correctly",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Without the check if (!ctx) throw new Error('...'), using <Accordion.Trigger> outside <Accordion> fails with a cryptic null reference error. Throwing 'useAccordion must be used inside <Accordion>' turns a hard-to-trace bug into an immediately actionable error.",
+  },
+  {
+    id: "cc-5",
+    question:
+      "In an Accordion with Compound Components, why is a second Context level (ItemCtx) needed?",
+    options: [
+      "To improve performance by preventing re-renders of the whole tree",
+      "So that Trigger and Panel know their id without receiving explicit props",
+      "To split the Accordion state into multiple independent stores",
+      "To allow each item to have its own independent open/closed state",
+    ],
+    correctIndex: 1,
+    explanation:
+      "AccordionCtx provides global state (which item is active, toggle function). ItemCtx provides each item's id to its children. Without ItemCtx, Trigger and Panel would need to receive the id as a prop, breaking the prop-free API. Two context levels, each with a clear responsibility.",
+  },
+  {
+    id: "cc-6",
+    question:
+      "What is the main difference between Compound Components and passing configuration as items={[...]} props?",
+    options: [
+      "Compound Components are more performant because they avoid extra renders",
+      "Compound Components let the consumer control the layout and content of each part",
+      "Props are less verbose and easier to maintain long term",
+      "Compound Components require less code to implement",
+    ],
+    correctIndex: 1,
+    explanation:
+      "With items={[...]} the structure is fixed by the author. With Compound Components, the consumer decides the order, what to render inside each subcomponent, and can even mix in other elements. Flexibility shifts from the author to the consumer.",
+  },
+  {
+    id: "cc-7",
+    question:
+      "What happens if the check if (!ctx) throw new Error(...) is omitted in the custom hook?",
+    options: [
+      "TypeScript throws a compile-time error before executing the code",
+      "React automatically shows the nearest error boundary with a useful message",
+      "The component fails with a cryptic null reference error instead of a clear message",
+      "Context returns an empty object by default and the component does not render",
+    ],
+    correctIndex: 2,
+    explanation:
+      "Without the validation, ctx is null and the first access to ctx.active throws Cannot read properties of null — an error that gives no hint about the real problem. The explicit check turns that cryptic error into an immediately actionable message.",
+  },
+  {
+    id: "cc-8",
+    question:
+      "Which of the following is a real example of the Compound Components pattern in native HTML?",
+    options: [
+      "<div className='container'>",
+      "<form onSubmit={handler}>",
+      "<select><option value='1'>One</option></select>",
+      "<input type='text' />",
+    ],
+    correctIndex: 2,
+    explanation:
+      "select + option is the original Compound Component in HTML. select manages the selected value; option is the subcomponent that communicates implicitly with its parent. Libraries like Radix UI, React Aria, and Headless UI follow exactly this same pattern.",
+  },
+  {
+    id: "cc-9",
+    question: "How does the Compound Components pattern differ from the Render Props pattern?",
+    options: [
+      "Render Props uses Context and Compound Components uses direct props",
+      "Compound Components uses declarative JSX; Render Props exposes logic through a function",
+      "Compound Components is only for UI components; Render Props is for business logic",
+      "There are no relevant differences, they are completely equivalent patterns",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Both share state with the consumer, but differently. Render Props: <Mouse render={(pos) => <Cat {...pos} />} — flexible but verbose. Compound Components: <Tabs><Tabs.List>...</Tabs.List></Tabs> — declarative, readable, natural JSX structure. Compound Components is usually preferred when the consumer controls the layout.",
+  },
+  {
+    id: "cc-10",
+    question: "Why is the Context used in Compound Components generally private (not exported)?",
+    options: [
+      "Due to technical limitations in React that prevent exporting it from a module",
+      "To prevent the consumer from coupling their code to internal implementation details",
+      "Because exporting Context causes memory leaks in production",
+      "Due to performance requirements of the React Compiler",
+    ],
+    correctIndex: 1,
+    explanation:
+      "The Context is an implementation detail. Exporting it would allow consumers to use it directly, coupling their code to the internal structure. If the author restructures the component (e.g., splitting one Context into two), it would break all consumer code. Exporting only the custom hook (useAccordion) keeps the public API clean and stable.",
+  },
+]
+
 export const allQuizzes: Quiz[] = [
   {
     id: "fundamentos",
@@ -1382,6 +1521,13 @@ export const allQuizzes: Quiz[] = [
     description: "Concurrent React, Server Components, React 19, and deep architecture",
     difficulty: "advanced",
     questions: advancedQuestions,
+  },
+  {
+    id: "compound-components",
+    label: "Compound Components",
+    description: "Compound Components pattern: private Context, subcomponents, and flexible APIs",
+    difficulty: "advanced",
+    questions: compoundComponentsQuestions,
   },
 ]
 
