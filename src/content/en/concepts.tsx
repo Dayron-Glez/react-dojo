@@ -2396,7 +2396,7 @@ export default function App() {
       >
         {broken ? "Fix" : "Break"} component
       </button>
-      <ErrorBoundary>
+      <ErrorBoundary key={String(broken)}>
         <UserProfile broken={broken} />
       </ErrorBoundary>
     </div>
@@ -2410,6 +2410,7 @@ export default function App() {
       "Event handlers don't propagate errors to the React tree — use try/catch inside the handler, not an Error Boundary.",
       "An Error Boundary can't catch its own errors — you need another Error Boundary parent wrapping it.",
       "In development with StrictMode, React intentionally re-throws the error after catching it. In production the behavior is as expected.",
+      "A retry button that only resets hasError won't help if the child still throws. Pass a key that changes when you want React to fully unmount and remount the boundary from scratch.",
     ],
   },
 }

@@ -669,7 +669,7 @@ export default function App() {
       >
         {broken ? "Arreglar" : "Romper"} componente
       </button>
-      <ErrorBoundary>
+      <ErrorBoundary key={String(broken)}>
         <UserProfile broken={broken} />
       </ErrorBoundary>
     </div>
@@ -683,6 +683,7 @@ export default function App() {
       "Los event handlers no propagan errores al árbol de React — usa try/catch dentro del handler, no un Error Boundary.",
       "Un Error Boundary no puede capturar sus propios errores — necesitas otro Error Boundary padre que lo envuelva.",
       "En desarrollo con StrictMode, React vuelve a lanzar el error intencionalmente tras capturarlo. En producción el comportamiento es el esperado.",
+      "El botón de reintentar no basta con resetear hasError si el componente hijo sigue fallando. Pasa una key que cambie cuando quieras que React desmonte y vuelva a montar el boundary desde cero.",
     ],
   },
 ]
