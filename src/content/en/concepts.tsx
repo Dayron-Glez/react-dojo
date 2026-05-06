@@ -2270,6 +2270,148 @@ export default function App() {
       />
     ),
   },
+  "error-boundary": {
+    kicker: "API · Error handling",
+    title: "Isolate errors so they don't bring down the entire UI",
+    lede: "Without an Error Boundary, an error in any child component destroys the entire tree and the user sees a blank screen. An Error Boundary intercepts the error, displays a fallback UI, and leaves the rest of the application intact.",
+    sections: [
+      {
+        heading: "Why do they exist?",
+        body: (
+          <p>
+            React propagates render errors upward until something catches them. If nothing does, the
+            entire tree unmounts. An Error Boundary acts like a <code>try/catch</code> for the
+            component tree: it catches the error, updates its own state to show a fallback, and
+            leaves the rest of the app untouched. It's the foundation of graceful degradation in
+            React.
+          </p>
+        ),
+      },
+      {
+        heading: "How to build one",
+        body: (
+          <>
+            <p>
+              It must be a <strong>class</strong> — there's no native functional equivalent. It
+              needs two lifecycle methods:
+            </p>
+            <ul>
+              <li>
+                <code>static getDerivedStateFromError(error)</code> — a static, pure method that
+                returns the new state. React calls it during the render phase to display the
+                fallback.
+              </li>
+              <li>
+                <code>componentDidCatch(error, info)</code> — runs after render. This is where side
+                effects go: logs, sending data to a monitoring service (Sentry, Datadog…).
+              </li>
+            </ul>
+            <p>
+              Use it just like <code>{"<Suspense>"}</code>: wrap the subtree you want to protect.
+            </p>
+          </>
+        ),
+      },
+      {
+        heading: "What it catches and what it doesn't",
+        body: (
+          <>
+            <p>
+              ✅ Catches errors in <strong>render</strong>, lifecycle methods, and child component
+              constructors.
+            </p>
+            <p>❌ Does not catch:</p>
+            <ul>
+              <li>
+                <strong>Event handlers</strong> — events don't go through React's render cycle. Use{" "}
+                <code>try/catch</code> inside the handler.
+              </li>
+              <li>
+                <strong>Async code</strong> — <code>setTimeout</code>, <code>fetch</code>, promises.
+                The error occurs outside the React tree.
+              </li>
+              <li>
+                <strong>Server-side rendering (SSR)</strong>.
+              </li>
+              <li>
+                <strong>Its own errors</strong> — an Error Boundary can't catch its own errors. You
+                need another Error Boundary parent to wrap it.
+              </li>
+            </ul>
+          </>
+        ),
+      },
+    ],
+    playground: (
+      <Playground
+        files={{
+          "/App.js": `import { Component, useState } from "react";
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error("Error caught:", error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: 16, background: "#fee2e2", borderRadius: 8, color: "#991b1b" }}>
+          <strong>Something went wrong 😕</strong>
+          <p style={{ fontSize: 13, marginTop: 8 }}>{this.state.error?.message}</p>
+          <button
+            onClick={() => this.setState({ hasError: false, error: null })}
+            style={{ marginTop: 8, padding: "4px 12px", cursor: "pointer" }}
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function UserProfile({ broken }) {
+  if (broken) throw new Error("Failed to load profile");
+  return <p style={{ color: "var(--fg)" }}>✓ Profile loaded successfully</p>;
+}
+
+export default function App() {
+  const [broken, setBroken] = useState(false);
+  return (
+    <div style={{ fontFamily: "system-ui", maxWidth: 400, padding: 24 }}>
+      <h2 style={{ color: "var(--fg)" }}>Error Boundary</h2>
+      <button
+        onClick={() => setBroken((b) => !b)}
+        style={{ marginBottom: 16, padding: "6px 14px", cursor: "pointer" }}
+      >
+        {broken ? "Fix" : "Break"} component
+      </button>
+      <ErrorBoundary>
+        <UserProfile broken={broken} />
+      </ErrorBoundary>
+    </div>
+  );
+}
+`,
+        }}
+      />
+    ),
+    pitfalls: [
+      "Event handlers don't propagate errors to the React tree — use try/catch inside the handler, not an Error Boundary.",
+      "An Error Boundary can't catch its own errors — you need another Error Boundary parent wrapping it.",
+      "In development with StrictMode, React intentionally re-throws the error after catching it. In production the behavior is as expected.",
+    ],
+  },
 }
 
 function applyOverrides(concepts: Concept[]): Concept[] {
@@ -2329,6 +2471,7 @@ export const categories: Category[] = [
       "useId",
       "useFormStatus",
       "compound-components",
+      "error-boundary",
     ],
   },
   {

@@ -57,6 +57,7 @@ export const categories: Category[] = [
       "useId",
       "useFormStatus",
       "compound-components",
+      "error-boundary",
     ],
   },
   {
