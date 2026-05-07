@@ -13,7 +13,13 @@ import { useMemoFilter } from "./use-memo-filter"
 import { transitionTabs } from "./transition-tabs"
 import { optimisticLike } from "./optimistic-like"
 import { actionForm } from "./action-form"
-import { compoundAccordion } from "./compound-accordion"
+import { toggleButton } from "./toggle-button"
+import { inputControl } from "./input-control"
+import { likeButton } from "./like-button"
+import { tabsComponent } from "./tabs-component"
+import { formValidation } from "./form-validation"
+import { colorPicker } from "./color-picker"
+import { accordionComponent } from "./accordion-component"
 import type { Exercise } from "./types"
 
 export type { Exercise, Difficulty } from "./types"
@@ -34,7 +40,13 @@ export const allExercises: Exercise[] = [
   transitionTabs,
   optimisticLike,
   actionForm,
-  compoundAccordion,
+  toggleButton,
+  inputControl,
+  likeButton,
+  tabsComponent,
+  formValidation,
+  colorPicker,
+  accordionComponent,
 ]
 
 export const exerciseIndex: Record<string, Exercise> = Object.fromEntries(

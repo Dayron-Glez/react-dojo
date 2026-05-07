@@ -13,6 +13,13 @@ import { useMemoFilter } from "@/content/exercises/use-memo-filter"
 import { transitionTabs } from "@/content/exercises/transition-tabs"
 import { optimisticLike } from "@/content/exercises/optimistic-like"
 import { actionForm } from "@/content/exercises/action-form"
+import { toggleButton } from "@/content/exercises/toggle-button"
+import { inputControl } from "@/content/exercises/input-control"
+import { likeButton } from "@/content/exercises/like-button"
+import { tabsComponent } from "@/content/exercises/tabs-component"
+import { formValidation } from "@/content/exercises/form-validation"
+import { colorPicker } from "@/content/exercises/color-picker"
+import { accordionComponent } from "@/content/exercises/accordion-component"
 import { compoundAccordion } from "@/content/exercises/compound-accordion"
 import type { Exercise } from "@/content/exercises/types"
 
@@ -23,6 +30,798 @@ type ExerciseOverride = Partial<
 >
 
 const overrides: Record<string, ExerciseOverride> = {
+  "toggle-button": {
+    title: "Toggle button",
+    lede: "A button that toggles between two states: 'off' and 'on'. Changes color and text based on state. Use the ternary operator for conditional rendering.",
+    objectives: [
+      "Declare isOn state with initial value false",
+      "Display 'ON' or 'OFF' based on state",
+      "Change background color: green when on, gray when off",
+      "On click, toggle state with setIsOn(!isOn)",
+    ],
+    hint: "The ternary operator: condition ? valueIfTrue : valueIfFalse",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+const appStyle = {
+  padding: 24,
+  textAlign: "center",
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+export default function App() {
+  const [isOn, setIsOn] = useState(false);
+
+  return (
+    <div style={appStyle}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Toggle Button</p>
+      <button
+        onClick={() => {}}
+        style={{
+          backgroundColor: isOn ? "#22c55e" : "#6b7280",
+          color: "white",
+          padding: "12px 24px",
+          borderRadius: 8,
+          border: "none",
+          cursor: "pointer",
+          fontSize: 18
+        }}
+      >
+        {/* TODO: show ON/OFF based on isOn */}
+        OFF
+      </button>
+    </div>
+  );
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { useState } from "react";
+
+const appStyle = {
+  padding: 24,
+  textAlign: "center",
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+export default function App() {
+  const [isOn, setIsOn] = useState(false);
+
+  return (
+    <div style={appStyle}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Toggle Button</p>
+      <button
+        onClick={() => setIsOn(!isOn)}
+        style={{
+          backgroundColor: isOn ? "#22c55e" : "#6b7280",
+          color: "white",
+          padding: "12px 24px",
+          borderRadius: 8,
+          border: "none",
+          cursor: "pointer",
+          fontSize: 18
+        }}
+      >
+        {isOn ? "ON" : "OFF"}
+      </button>
+    </div>
+  );
+}
+`,
+    },
+  },
+  "input-control": {
+    title: "Controlled input",
+    lede: "An input that shows in real-time what the user types. The input value comes from state and updates with onChange. This pattern is called a 'controlled component'.",
+    objectives: [
+      "Declare text state with empty string",
+      "Input has value={text}",
+      "onChange updates with setText(e.target.value)",
+      "Display the text below in a <p> element",
+    ],
+    hint: "A controlled component has its value bound to state",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+const appStyle = {
+  padding: 24,
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+const labelStyle = {
+  marginBottom: 24,
+  color: "#71717a",
+};
+
+export default function App() {
+  const [text, setText] = useState("");
+
+  return (
+    <div style={appStyle}>
+      <p style={labelStyle}>Controlled Input</p>
+      <input
+        value={text}
+        onChange={() => {}}
+        placeholder="type something..."
+        style={{ padding: 8, fontSize: 16, width: "100%", borderRadius: 8 }}
+      />
+      <p style={{ marginTop: 16, fontSize: 18 }}>
+        {/* TODO: display text here */}
+      </p>
+    </div>
+  );
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { useState } from "react";
+
+const appStyle = {
+  padding: 24,
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+const labelStyle = {
+  marginBottom: 24,
+  color: "#71717a",
+};
+
+export default function App() {
+  const [text, setText] = useState("");
+
+  return (
+    <div style={appStyle}>
+      <p style={labelStyle}>Controlled Input</p>
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="type something..."
+        style={{ padding: 8, fontSize: 16, width: "100%", borderRadius: 8 }}
+      />
+      <p style={{ marginTop: 16, fontSize: 18 }}>{text}</p>
+    </div>
+  );
+}
+`,
+    },
+  },
+  "like-button": {
+    title: "Like button",
+    lede: "A 'like' button that shows the counter and can be toggled. If liked, clicking decrements; if not, it increments.",
+    objectives: [
+      "Declare likes state initial at 0",
+      "Declare isLiked state initial at false",
+      "On click: if isLiked, likes-- and isLiked=false; if not, likes++ and isLiked=true",
+      "Change button color when liked",
+      "Show counter next to button",
+    ],
+    hint: "Use one state for the numeric value and another for the boolean liked state",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+const appStyle = {
+  padding: 24,
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+const rowStyle = {
+  display: "flex",
+  gap: 12,
+  alignItems: "center",
+};
+
+export default function App() {
+  const [likes, setLikes] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleClick = () => {
+  };
+
+  return (
+    <div style={appStyle}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Like Button</p>
+      <div style={rowStyle}>
+        <button
+          onClick={handleClick}
+          style={{
+            backgroundColor: isLiked ? "#ef4444" : "#e5e7eb",
+            color: isLiked ? "white" : "black",
+            padding: "8px 16px",
+            borderRadius: 8,
+            border: "none",
+            cursor: "pointer",
+            fontSize: 16
+          }}
+        >
+          ♥ Like
+        </button>
+        <span style={{ fontSize: 18 }}>
+          {/* TODO: display likes */}
+        </span>
+      </div>
+    </div>
+  );
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { useState } from "react";
+
+const appStyle = {
+  padding: 24,
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+const rowStyle = {
+  display: "flex",
+  gap: 12,
+  alignItems: "center",
+};
+
+export default function App() {
+  const [likes, setLikes] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleClick = () => {
+    if (isLiked) {
+      setLikes((l) => l - 1);
+      setIsLiked(false);
+    } else {
+      setLikes((l) => l + 1);
+      setIsLiked(true);
+    }
+  };
+
+  return (
+    <div style={appStyle}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Like Button</p>
+      <div style={rowStyle}>
+        <button
+          onClick={handleClick}
+          style={{
+            backgroundColor: isLiked ? "#ef4444" : "#e5e7eb",
+            color: isLiked ? "white" : "black",
+            padding: "8px 16px",
+            borderRadius: 8,
+            border: "none",
+            cursor: "pointer",
+            fontSize: 16
+          }}
+        >
+          ♥ Like
+        </button>
+        <span style={{ fontSize: 18 }}>{likes}</span>
+      </div>
+    </div>
+  );
+}
+`,
+    },
+  },
+  "tabs-component": {
+    title: "Tab component",
+    lede: "A tabs component with 3 tabs. Clicking a tab shows its content and hides the others. Use state to track which tab is active.",
+    objectives: [
+      "Declare activeTab state with initial value 'home'",
+      "Create 3 buttons for tabs: home, about, contact",
+      "On click, set activeTab to the clicked tab",
+      "Show different content for each tab based on activeTab",
+      "Style the active tab differently from inactive ones",
+    ],
+    hint: "Use conditional rendering: activeTab === 'home' && <HomeContent />",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+const tabs = [
+  { id: "home", label: "Home", content: "Welcome to my app!" },
+  { id: "about", label: "About", content: "I'm a React developer." },
+  { id: "contact", label: "Contact", content: "contactme@email.com" },
+];
+
+const appStyle = {
+  padding: 24,
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState("home");
+
+  const activeContent = "";
+
+  return (
+    <div style={appStyle}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Tabs Component</p>
+      <div style={{ display: "flex", gap: 4, borderBottom: "1px solid #3f3f46" }}>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => {}}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: activeTab === tab.id ? "#3b82f6" : "transparent",
+              color: activeTab === tab.id ? "white" : "#a1a1aa",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div style={{ padding: 16, fontSize: 18 }}>
+        {activeContent || "TODO: render the active tab content"}
+      </div>
+    </div>
+  );
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { useState } from "react";
+
+const tabs = [
+  { id: "home", label: "Home", content: "Welcome to my app!" },
+  { id: "about", label: "About", content: "I'm a React developer." },
+  { id: "contact", label: "Contact", content: "contactme@email.com" },
+];
+
+const appStyle = {
+  padding: 24,
+  fontFamily: "system-ui",
+  background: "#09090b",
+  minHeight: "100vh",
+};
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState("home");
+
+  const activeContent = tabs.find((t) => t.id === activeTab)?.content;
+
+  return (
+    <div style={appStyle}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Tabs Component</p>
+      <div style={{ display: "flex", gap: 4, borderBottom: "1px solid #3f3f46" }}>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: activeTab === tab.id ? "#3b82f6" : "transparent",
+              color: activeTab === tab.id ? "white" : "#a1a1aa",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div style={{ padding: 16, fontSize: 18 }}>{activeContent}</div>
+    </div>
+  );
+}
+`,
+    },
+  },
+  "form-validation": {
+    title: "Form with validation",
+    lede: "A simple form with name and email fields. Validate that name is not empty and email contains '@'. Show error messages below each field.",
+    objectives: [
+      "Declare state for form values: name and email",
+      "Declare state for errors: nameError and emailError",
+      "On submit, validate both fields",
+      "Show error messages when fields are invalid",
+      "Prevent submission if there are errors",
+    ],
+    hint: "Validate on submit, not on every keystroke, to avoid annoying the user",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+export default function App() {
+  const [form, setForm] = useState({ name: "", email: "" });
+  const [errors, setErrors] = useState({ name: "", email: "" });
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ padding: 24, fontFamily: "system-ui" }}>
+      <div style={{ marginBottom: 16 }}>
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="name"
+          style={{ padding: 8, fontSize: 16, width: "100%" }}
+        />
+        {/* TODO: display name error */}
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <input
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+          placeholder="email"
+          style={{ padding: 8, fontSize: 16, width: "100%" }}
+        />
+        {/* TODO: display email error */}
+      </div>
+      <button type="submit" style={{ padding: "8px 16px", fontSize: 16 }}>
+        Submit
+      </button>
+      {/* TODO: display success message */}
+    </form>
+  );
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { useState } from "react";
+
+export default function App() {
+  const [form, setForm] = useState({ name: "", email: "" });
+  const [errors, setErrors] = useState({ name: "", email: "" });
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = { name: "", email: "" };
+
+    if (!form.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    if (!form.email.includes("@")) {
+      newErrors.email = "Invalid email";
+    }
+
+    setErrors(newErrors);
+
+    if (!newErrors.name && !newErrors.email) {
+      setSuccess(true);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ padding: 24, fontFamily: "system-ui" }}>
+      <div style={{ marginBottom: 16 }}>
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="name"
+          style={{ padding: 8, fontSize: 16, width: "100%" }}
+        />
+        {errors.name && (
+          <span style={{ color: "red", fontSize: 14 }}>{errors.name}</span>
+        )}
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <input
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+          placeholder="email"
+          style={{ padding: 8, fontSize: 16, width: "100%" }}
+        />
+        {errors.email && (
+          <span style={{ color: "red", fontSize: 14 }}>{errors.email}</span>
+        )}
+      </div>
+      <button type="submit" style={{ padding: "8px 16px", fontSize: 16 }}>
+        Submit
+      </button>
+      {success && (
+        <p style={{ color: "green", marginTop: 16 }}>Success!</p>
+      )}
+    </form>
+  );
+}
+`,
+    },
+  },
+  "color-picker": {
+    title: "Color picker",
+    lede: "A color picker with preset colors. Clicking a color sets it as the selected color and displays a preview box with that color.",
+    objectives: [
+      "Declare selectedColor state with initial value '#ffffff'",
+      "Create 4 buttons with different background colors",
+      "On click, set selectedColor to the clicked color",
+      "Show a preview box with the selected color",
+      "Display the hex code below the preview",
+    ],
+    hint: "Store the color value in state, use it both for the active button style and the preview box",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+const colors = [
+  "#ef4444", "#f97316", "#eab308", "#22c55e",
+  "#14b8a6", "#3b82f6", "#8b5cf6", "#ec4899",
+  "#ffffff", "#71717a", "#000000",
+];
+
+const colorBtnStyle = (selected) => ({
+  width: 40,
+  height: 40,
+  borderRadius: 8,
+  border: selected ? "2px solid #fff" : "2px solid transparent",
+  cursor: "pointer",
+  boxShadow: selected ? "0 0 0 2px #3b82f6" : "none",
+});
+
+const swatchStyle = {
+  width: 64,
+  height: 64,
+  borderRadius: 12,
+  border: "1px solid #3f3f46",
+};
+
+export default function App() {
+  const [selectedColor, setSelectedColor] = useState("#3b82f6");
+
+  const handleColorClick = (color) => {
+  };
+
+  return (
+    <div style={{ padding: 24, fontFamily: "system-ui", background: "#09090b", minHeight: "100vh" }}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Color Picker</p>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
+        {colors.map((color) => (
+          <button
+            key={color}
+            onClick={() => handleColorClick(color)}
+            style={{ ...colorBtnStyle(selectedColor === color), background: color }}
+            title={color}
+          />
+        ))}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ ...swatchStyle, background: selectedColor }} />
+        <input
+          type="color"
+          value={selectedColor}
+          onChange={() => {}}
+          style={{ ...swatchStyle, padding: 0, cursor: "pointer" }}
+        />
+        <span style={{ color: "#fff", fontFamily: "monospace", fontSize: 14 }}>
+        </span>
+      </div>
+    </div>
+  );
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { useState } from "react";
+
+const colors = [
+  "#ef4444", "#f97316", "#eab308", "#22c55e",
+  "#14b8a6", "#3b82f6", "#8b5cf6", "#ec4899",
+  "#ffffff", "#71717a", "#000000",
+];
+
+const colorBtnStyle = (selected) => ({
+  width: 40,
+  height: 40,
+  borderRadius: 8,
+  border: selected ? "2px solid #fff" : "2px solid transparent",
+  cursor: "pointer",
+  boxShadow: selected ? "0 0 0 2px #3b82f6" : "none",
+});
+
+const swatchStyle = {
+  width: 64,
+  height: 64,
+  borderRadius: 12,
+  border: "1px solid #3f3f46",
+};
+
+export default function App() {
+  const [selectedColor, setSelectedColor] = useState("#3b82f6");
+
+  const handleColorClick = (color) => setSelectedColor(color);
+
+  return (
+    <div style={{ padding: 24, fontFamily: "system-ui", background: "#09090b", minHeight: "100vh" }}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Color Picker</p>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
+        {colors.map((color) => (
+          <button
+            key={color}
+            onClick={() => handleColorClick(color)}
+            style={{ ...colorBtnStyle(selectedColor === color), background: color }}
+            title={color}
+          />
+        ))}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ ...swatchStyle, background: selectedColor }} />
+        <input
+          type="color"
+          value={selectedColor}
+          onChange={(e) => setSelectedColor(e.target.value)}
+          style={{ ...swatchStyle, padding: 0, cursor: "pointer" }}
+        />
+        <span style={{ color: "#fff", fontFamily: "monospace", fontSize: 14 }}>{selectedColor.toUpperCase()}</span>
+      </div>
+    </div>
+  );
+}
+`,
+    },
+  },
+  "accordion-component": {
+    title: "Accordion component",
+    lede: "An accordion with 3 sections. Clicking a section header expands or collapses it. Only one section can be open at a time.",
+    objectives: [
+      "Declare openIndex state with initial value null (all closed)",
+      "Create 3 section objects with title and content",
+      "On click header, set openIndex: if same index, set to null; otherwise set to that index",
+      "Only render content when the section is open",
+      "Show different icons for open vs closed state",
+    ],
+    hint: "Use openIndex === index to check if a section is open, not a boolean for each section",
+    starter: {
+      "/App.js": `import { useState } from "react";
+
+const items = [
+  { id: "1", title: "What is React?", content: "A library for building UIs." },
+  { id: "2", title: "What is JSX?", content: "Syntax that looks like HTML but is JavaScript." },
+  { id: "3", title: "What are hooks?", content: "Functions that add state to components." },
+];
+
+const itemStyle = {
+  border: "1px solid #3f3f46",
+  borderRadius: 8,
+  marginBottom: 8,
+  overflow: "hidden",
+};
+
+const headerStyle = {
+  padding: 16,
+  background: "#27272a",
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
+
+const contentStyle = {
+  padding: 16,
+  background: "#1a1a1e",
+  color: "#a1a1aa",
+};
+
+function AccordionItem({ item, isOpen, onToggle }) {
+  return (
+    <div style={itemStyle}>
+      <div onClick={onToggle} style={headerStyle}>
+        <span style={{ color: "#fff" }}>{item.title}</span>
+        <span style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms" }}>▼</span>
+      </div>
+      {isOpen && <div style={contentStyle}>{item.content}</div>}
+    </div>
+  );
+}
+
+export default function App() {
+  const [openItems, setOpenItems] = useState(new Set());
+
+  const toggleItem = (id) => {
+  };
+
+  return (
+    <div style={{ padding: 24, fontFamily: "system-ui", background: "#09090b", minHeight: "100vh" }}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Accordion</p>
+      {items.map((item) => (
+        <AccordionItem
+          key={item.id}
+          item={item}
+          isOpen={false}
+          onToggle={() => toggleItem(item.id)}
+        />
+      ))}
+    </div>
+  );
+}
+`,
+    },
+    solution: {
+      "/App.js": `import { useState } from "react";
+
+const items = [
+  { id: "1", title: "What is React?", content: "A library for building UIs." },
+  { id: "2", title: "What is JSX?", content: "Syntax that looks like HTML but is JavaScript." },
+  { id: "3", title: "What are hooks?", content: "Functions that add state to components." },
+];
+
+const itemStyle = {
+  border: "1px solid #3f3f46",
+  borderRadius: 8,
+  marginBottom: 8,
+  overflow: "hidden",
+};
+
+const headerStyle = {
+  padding: 16,
+  background: "#27272a",
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
+
+const contentStyle = {
+  padding: 16,
+  background: "#1a1a1e",
+  color: "#a1a1aa",
+};
+
+function AccordionItem({ item, isOpen, onToggle }) {
+  return (
+    <div style={itemStyle}>
+      <div onClick={onToggle} style={headerStyle}>
+        <span style={{ color: "#fff" }}>{item.title}</span>
+        <span style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms" }}>▼</span>
+      </div>
+      {isOpen && <div style={contentStyle}>{item.content}</div>}
+    </div>
+  );
+}
+
+export default function App() {
+  const [openItems, setOpenItems] = useState(new Set());
+
+  const toggleItem = (id) => {
+    setOpenItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  return (
+    <div style={{ padding: 24, fontFamily: "system-ui", background: "#09090b", minHeight: "100vh" }}>
+      <p style={{ marginBottom: 24, color: "#71717a" }}>Accordion</p>
+      {items.map((item) => (
+        <AccordionItem key={item.id} item={item} isOpen={openItems.has(item.id)} onToggle={() => toggleItem(item.id)} />
+      ))}
+    </div>
+  );
+}
+`,
+    },
+  },
   "filtered-list": {
     title: "Real-time filtered list",
     lede: "A search field filters a list of fruits as the user types. The filtered result is derived directly from state — no extra useState or useMemo needed at this scale.",
@@ -1923,6 +2722,13 @@ export const allExercises: Exercise[] = [
   transitionTabs,
   optimisticLike,
   actionForm,
+  toggleButton,
+  inputControl,
+  likeButton,
+  tabsComponent,
+  formValidation,
+  colorPicker,
+  accordionComponent,
   compoundAccordion,
 ].map(applyOverrides)
 
