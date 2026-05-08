@@ -16,7 +16,7 @@ interface Developer {
   id: string
   name: string
   image: string | null
-  createdAt: string
+  createdAt: Date
   concepts: number
   exercises: number
   quizzes: number
@@ -46,8 +46,8 @@ async function getUsers(): Promise<Developer[]> {
   )
 }
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+function formatDate(date: Date) {
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric" })
 }
 
 interface Props {
