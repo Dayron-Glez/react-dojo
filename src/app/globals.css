@@ -313,6 +313,28 @@ body {
   border-radius: 2px;
 }
 
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-bg-raise);
+  color: var(--color-fg);
+  padding: 0.5rem 1rem;
+  z-index: 100;
+  border: 1px solid var(--color-line-strong);
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);

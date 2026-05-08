@@ -35,11 +35,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    document.getElementById("scroll-area")?.scrollTo({ top: 0, behavior: "auto" })
+    document.getElementById("main-content")?.scrollTo({ top: 0, behavior: "auto" })
   }, [pathname])
 
   return (
     <SidebarProvider defaultOpen className="h-svh! flex-col! overflow-hidden">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <Header
         onSearchOpen={() => setSearchOpen(true)}
         onShortcutsOpen={() => setShortcutsOpen(true)}
@@ -50,11 +53,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar />
         <SidebarInset className="flex min-w-0 flex-col overflow-hidden">
           <BreadcrumbBar />
-          <div id="scroll-area" className="min-h-0 flex-1 overflow-y-auto">
+          <main
+            id="main-content"
+            className="min-h-0 flex-1 overflow-y-auto outline-none"
+            tabIndex={-1}
+          >
             <div key={pathname} className="page-enter">
               {children}
             </div>
-          </div>
+          </main>
           <Footer />
         </SidebarInset>
       </div>

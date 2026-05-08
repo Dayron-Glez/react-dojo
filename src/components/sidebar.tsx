@@ -519,6 +519,7 @@ export function Sidebar() {
               </div>
               <Tooltip>
                 <TooltipTrigger
+                  aria-label="Sign out"
                   className="text-sidebar-foreground/30 hover:text-sidebar-foreground/70 cursor-pointer transition-colors"
                   onClick={async () => {
                     await authClient.signOut()

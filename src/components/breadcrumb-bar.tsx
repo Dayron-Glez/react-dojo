@@ -70,12 +70,12 @@ export function BreadcrumbBar() {
                           e.preventDefault()
                           push(item.href!)
                         }}
-                      />
+                      >
+                        {item.label}
+                      </a>
                     }
                     className="text-fg-faint hover:text-fg-muted transition-colors"
-                  >
-                    {item.label}
-                  </BreadcrumbLink>
+                  />
                 ) : (
                   <BreadcrumbPage className="text-fg-muted font-mono">{item.label}</BreadcrumbPage>
                 )}

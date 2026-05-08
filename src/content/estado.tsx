@@ -143,10 +143,23 @@ export default function App() {
       </form>
       <ul style={{ paddingLeft: 18 }}>
         {state.items.map((it) => (
-          <li key={it.id} style={{ textDecoration: it.done ? "line-through" : "none" }}>
-            <span onClick={() => dispatch({ type: "toggle", id: it.id })} style={{ cursor: "pointer" }}>
+          <li key={it.id} style={{ textDecoration: it.done ? "line-through" : "none", display: "flex", alignItems: "center" }}>
+            <button
+              onClick={() => dispatch({ type: "toggle", id: it.id })}
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                font: "inherit",
+                cursor: "pointer",
+                textAlign: "left",
+                flex: 1,
+                color: "inherit",
+                textDecoration: "inherit"
+              }}
+            >
               {it.text}
-            </span>
+            </button>
             <button onClick={() => dispatch({ type: "remove", id: it.id })} style={{ marginLeft: 8 }}>
               ×
             </button>

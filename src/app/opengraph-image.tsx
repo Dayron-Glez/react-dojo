@@ -211,7 +211,13 @@ export default async function Image() {
               border: "1px solid rgba(74,222,128,0.2)",
             }}
           >
-            <img src={logo} width={44} height={44} style={{ objectFit: "contain" }} />
+            <img
+              src={logo}
+              alt="React Dojo"
+              width={44}
+              height={44}
+              style={{ objectFit: "contain" }}
+            />
           </div>
           <div
             style={{
