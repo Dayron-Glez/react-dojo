@@ -21,6 +21,7 @@ import { formValidation } from "@/content/exercises/form-validation"
 import { colorPicker } from "@/content/exercises/color-picker"
 import { accordionComponent } from "@/content/exercises/accordion-component"
 import { compoundAccordion } from "@/content/exercises/compound-accordion"
+import { errorBoundary } from "@/content/exercises/error-boundary"
 import type { Exercise } from "@/content/exercises/types"
 
 export type { Exercise, Difficulty } from "@/content/exercises/types"
@@ -2723,6 +2724,19 @@ export default function App() {
 `,
     },
   },
+  "error-boundary": {
+    title: "Build an Error Boundary",
+    lede: "You have an app with a component that can fail while rendering. Right now, any error crashes the entire UI. Implement an Error Boundary as a React class component that catches the error, shows a fallback UI with the error message, and lets the user retry.",
+    objectives: [
+      "Create an ErrorBoundary class that extends Component",
+      "Implement static getDerivedStateFromError to update state with the error",
+      "Implement componentDidCatch to log the error to the console",
+      "Render a fallback with the error message when hasError is true",
+      "Add a 'Retry' button that resets the boundary state",
+      "Wrap <UserProfile> with <ErrorBoundary> in App",
+    ],
+    hint: "getDerivedStateFromError is a static method that returns the new state. componentDidCatch is where you handle side effects like logging. The retry button should call this.setState({ hasError: false, error: null }).",
+  },
 }
 
 function applyOverrides(exercise: Exercise): Exercise {
@@ -2755,6 +2769,7 @@ export const allExercises: Exercise[] = [
   colorPicker,
   accordionComponent,
   compoundAccordion,
+  errorBoundary,
 ].map(applyOverrides)
 
 export const exerciseIndex: Record<string, Exercise> = Object.fromEntries(
