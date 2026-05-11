@@ -1473,6 +1473,143 @@ const compoundComponentsQuestions: QuizQuestion[] = [
   },
 ]
 
+const errorBoundaryQuestions: QuizQuestion[] = [
+  {
+    id: "eb-1",
+    question:
+      "¿Qué método de ciclo de vida se encarga de mostrar la UI de fallback cuando ocurre un error?",
+    options: [
+      "componentDidCatch",
+      "getDerivedStateFromError",
+      "componentDidUpdate",
+      "getSnapshotBeforeUpdate",
+    ],
+    correctIndex: 1,
+    explanation:
+      "getDerivedStateFromError es un método estático y puro que React llama durante la fase de render cuando un hijo lanza un error. Devuelve el nuevo estado (por ejemplo, { hasError: true }) que provoca el re-render con el fallback. componentDidCatch se llama después, en la fase de commit, y es para side effects como logging.",
+  },
+  {
+    id: "eb-2",
+    question: "¿Para qué sirve componentDidCatch en un Error Boundary?",
+    options: [
+      "Para actualizar el estado y mostrar el fallback UI",
+      "Para prevenir que el error se propague al componente padre",
+      "Para ejecutar side effects como logging o reportar el error a un servicio de monitoreo",
+      "Para reintentar el render del componente que falló automáticamente",
+    ],
+    correctIndex: 2,
+    explanation:
+      "componentDidCatch recibe el error y un objeto ErrorInfo con componentStack. Se ejecuta en la fase de commit (después del render), por eso es el lugar correcto para side effects: console.error, enviar a Sentry, Datadog, etc. No debe usarse para actualizar estado — eso es responsabilidad de getDerivedStateFromError.",
+  },
+  {
+    id: "eb-3",
+    question: "¿Por qué un Error Boundary debe ser una clase y no un componente funcional?",
+    options: [
+      "Porque los hooks tienen peor rendimiento para el manejo de errores",
+      "Porque React no expone un hook equivalente a getDerivedStateFromError ni a componentDidCatch",
+      "Porque los componentes funcionales no pueden tener estado",
+      "Por compatibilidad con versiones antiguas de React",
+    ],
+    correctIndex: 1,
+    explanation:
+      "React no ofrece un equivalente funcional nativo para getDerivedStateFromError ni componentDidCatch. Hay propuestas abiertas para un hook use(ErrorBoundary) pero a día de hoy no existe en React estable. Librerías como react-error-boundary abstraen la clase para que puedas usarla de forma declarativa desde componentes funcionales.",
+  },
+  {
+    id: "eb-4",
+    question: "¿Cuál de los siguientes errores NO captura un Error Boundary?",
+    options: [
+      "Un error en el render de un componente hijo",
+      "Un error en el constructor de un componente hijo",
+      "Un error dentro de un setTimeout en un event handler",
+      "Un error en un método de ciclo de vida de un componente hijo",
+    ],
+    correctIndex: 2,
+    explanation:
+      "Los Error Boundaries solo capturan errores que ocurren dentro del ciclo de render de React. Un setTimeout se ejecuta fuera de ese ciclo, así que su error escapa al Error Boundary. Lo mismo aplica a fetch, promesas no capturadas y cualquier código asíncrono. Para esos casos necesitas try/catch o .catch().",
+  },
+  {
+    id: "eb-5",
+    question: "¿Cómo se implementa correctamente un botón de 'Reintentar' en un Error Boundary?",
+    options: [
+      "Llamando a this.forceUpdate() para forzar un re-render",
+      "Llamando a this.setState({ hasError: false, error: null }) para limpiar el estado",
+      "Desmontando y volviendo a montar el componente desde el padre con una key",
+      "Usando el método reset() que React expone en el objeto error",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Resetear hasError a false limpia el estado del boundary y React vuelve a renderizar los hijos. Sin embargo, si la condición que causó el error persiste (el mismo prop sigue siendo inválido, el mismo fetch sigue fallando), el Error Boundary volverá a capturar el error inmediatamente. Por eso el botón de reintentar suele combinarse con algún mecanismo en el padre para limpiar la causa raíz.",
+  },
+  {
+    id: "eb-6",
+    question: "¿Qué pasa si un Error Boundary lanza un error en su propio método render?",
+    options: [
+      "React muestra un fallback genérico de emergencia",
+      "El error es ignorado y se muestra el último render válido",
+      "Lo captura el Error Boundary padre más cercano en el árbol",
+      "La aplicación entera se desmonta sin posibilidad de recuperación",
+    ],
+    correctIndex: 2,
+    explanation:
+      "Un Error Boundary no puede capturarse a sí mismo. Si su render falla, el error se propaga hacia arriba hasta el siguiente Error Boundary en el árbol. Por eso se recomienda colocar múltiples Error Boundaries en distintos niveles: uno en la raíz como red de seguridad global y otros más específicos alrededor de widgets o rutas individuales.",
+  },
+  {
+    id: "eb-7",
+    question:
+      "¿Cuál es la diferencia entre getDerivedStateFromError y componentDidCatch en cuanto a cuándo se ejecutan?",
+    options: [
+      "Ambos se ejecutan en la fase de render, antes de que el DOM se actualice",
+      "getDerivedStateFromError en la fase de render; componentDidCatch en la fase de commit",
+      "getDerivedStateFromError en la fase de commit; componentDidCatch en la fase de render",
+      "Ambos se ejecutan en la fase de commit, después de actualizar el DOM",
+    ],
+    correctIndex: 1,
+    explanation:
+      "getDerivedStateFromError se llama durante la fase de render — React lo necesita para saber qué mostrar. Por eso debe ser puro, sin side effects. componentDidCatch se llama en la fase de commit, una vez que el DOM ya está actualizado con el fallback. Esta separación es la que permite registrar el error (commit) sin bloquear el render del fallback.",
+  },
+  {
+    id: "eb-8",
+    question: "¿Qué contiene el segundo argumento que recibe componentDidCatch?",
+    options: [
+      "El estado anterior del componente antes del error",
+      "Un objeto ErrorInfo con la propiedad componentStack",
+      "La lista de todos los componentes afectados por el error",
+      "Un objeto con métodos reset() y retry() para controlar la recuperación",
+    ],
+    correctIndex: 1,
+    explanation:
+      "El segundo argumento es un objeto ErrorInfo que contiene componentStack: una cadena con la traza del árbol de componentes hasta el que lanzó el error. Es muy útil para depuración y para enriquecer los reportes enviados a servicios de monitoreo como Sentry, que pueden mostrar esa traza junto al error.",
+  },
+  {
+    id: "eb-9",
+    question:
+      "¿Por qué en desarrollo con StrictMode el Error Boundary parece no funcionar correctamente?",
+    options: [
+      "StrictMode deshabilita los Error Boundaries para forzar el uso de try/catch",
+      "React vuelve a lanzar el error intencionalmente tras capturarlo para detectar efectos secundarios no seguros",
+      "StrictMode usa un algoritmo de reconciliación diferente que ignora los boundaries",
+      "Es un bug conocido de React que solo afecta al modo desarrollo",
+    ],
+    correctIndex: 1,
+    explanation:
+      "En desarrollo, React re-lanza el error después de que el Error Boundary lo captura. Esto hace que el error aparezca en la consola y en los overlays de herramientas como Create React App aunque el boundary esté funcionando. En producción el comportamiento es el esperado: el error queda capturado y se muestra el fallback sin ruido adicional.",
+  },
+  {
+    id: "eb-10",
+    question:
+      "¿Qué librería popular abstrae los Error Boundaries para usarlos de forma declarativa en componentes funcionales?",
+    options: [
+      "react-query",
+      "react-error-boundary",
+      "react-suspense-boundary",
+      "react-safe-render",
+    ],
+    correctIndex: 1,
+    explanation:
+      "react-error-boundary de Brian Vaughn (ahora mantenida por la comunidad) expone un componente <ErrorBoundary> con props como fallback, fallbackRender y onError, y un hook useErrorBoundary para lanzar errores manualmente desde componentes funcionales. Es la solución más adoptada cuando no quieres escribir una clase manualmente.",
+  },
+]
+
 export const allQuizzes: Quiz[] = [
   {
     id: "fundamentos",
@@ -1550,6 +1687,14 @@ export const allQuizzes: Quiz[] = [
     description: "Patrón Compound Components: Context privado, subcomponentes y APIs flexibles",
     difficulty: "advanced",
     questions: compoundComponentsQuestions,
+  },
+  {
+    id: "error-boundary",
+    label: "Error Boundary",
+    description:
+      "Captura de errores en React: getDerivedStateFromError, componentDidCatch y estrategias de recuperación",
+    difficulty: "advanced",
+    questions: errorBoundaryQuestions,
   },
 ]
 

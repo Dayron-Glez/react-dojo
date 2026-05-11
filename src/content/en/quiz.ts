@@ -1451,6 +1451,143 @@ const compoundComponentsQuestions: QuizQuestion[] = [
   },
 ]
 
+const errorBoundaryQuestions: QuizQuestion[] = [
+  {
+    id: "eb-1",
+    question:
+      "Which lifecycle method is responsible for showing the fallback UI when an error occurs?",
+    options: [
+      "componentDidCatch",
+      "getDerivedStateFromError",
+      "componentDidUpdate",
+      "getSnapshotBeforeUpdate",
+    ],
+    correctIndex: 1,
+    explanation:
+      "getDerivedStateFromError is a static, pure method that React calls during the render phase when a child throws. It returns the new state (e.g. { hasError: true }) that causes a re-render with the fallback. componentDidCatch runs later, during the commit phase, and is meant for side effects like logging.",
+  },
+  {
+    id: "eb-2",
+    question: "What is componentDidCatch used for in an Error Boundary?",
+    options: [
+      "To update state and show the fallback UI",
+      "To prevent the error from propagating to the parent component",
+      "To run side effects like logging or reporting the error to a monitoring service",
+      "To automatically retry the render of the failed component",
+    ],
+    correctIndex: 2,
+    explanation:
+      "componentDidCatch receives the error and an ErrorInfo object with componentStack. It runs in the commit phase (after the render), which makes it the right place for side effects: console.error, sending to Sentry, Datadog, etc. It should not be used to update state — that is getDerivedStateFromError's job.",
+  },
+  {
+    id: "eb-3",
+    question: "Why must an Error Boundary be a class component rather than a functional one?",
+    options: [
+      "Because hooks have worse performance for error handling",
+      "Because React does not expose a hook equivalent to getDerivedStateFromError or componentDidCatch",
+      "Because functional components cannot have state",
+      "For compatibility with older versions of React",
+    ],
+    correctIndex: 1,
+    explanation:
+      "React does not offer a native functional equivalent for getDerivedStateFromError or componentDidCatch. There are open proposals for a use(ErrorBoundary) hook but it does not exist in stable React today. Libraries like react-error-boundary wrap the class so you can use it declaratively from functional components.",
+  },
+  {
+    id: "eb-4",
+    question: "Which of the following errors does an Error Boundary NOT catch?",
+    options: [
+      "An error in the render of a child component",
+      "An error in the constructor of a child component",
+      "An error inside a setTimeout in an event handler",
+      "An error in a lifecycle method of a child component",
+    ],
+    correctIndex: 2,
+    explanation:
+      "Error Boundaries only catch errors that occur inside React's render cycle. A setTimeout runs outside that cycle, so its error escapes the boundary. The same applies to fetch, unhandled promises, and any async code. For those cases you need try/catch or .catch().",
+  },
+  {
+    id: "eb-5",
+    question: "How is a 'Retry' button correctly implemented in an Error Boundary?",
+    options: [
+      "By calling this.forceUpdate() to force a re-render",
+      "By calling this.setState({ hasError: false, error: null }) to clear the state",
+      "By unmounting and remounting the component from the parent using a key",
+      "By using the reset() method React exposes on the error object",
+    ],
+    correctIndex: 1,
+    explanation:
+      "Resetting hasError to false clears the boundary state and React re-renders the children. However, if the condition that caused the error persists (the same prop is still invalid, the same fetch still fails), the Error Boundary will catch the error again immediately. That is why the retry button is often combined with a mechanism in the parent to fix the root cause.",
+  },
+  {
+    id: "eb-6",
+    question: "What happens if an Error Boundary throws an error in its own render method?",
+    options: [
+      "React shows a generic emergency fallback",
+      "The error is ignored and the last valid render is shown",
+      "It is caught by the nearest parent Error Boundary in the tree",
+      "The entire app unmounts with no possibility of recovery",
+    ],
+    correctIndex: 2,
+    explanation:
+      "An Error Boundary cannot catch its own errors. If its render fails, the error propagates up to the next Error Boundary in the tree. That is why it is recommended to place multiple Error Boundaries at different levels: one at the root as a global safety net and others more specific around individual widgets or routes.",
+  },
+  {
+    id: "eb-7",
+    question:
+      "What is the difference between getDerivedStateFromError and componentDidCatch in terms of when they run?",
+    options: [
+      "Both run in the render phase, before the DOM is updated",
+      "getDerivedStateFromError in the render phase; componentDidCatch in the commit phase",
+      "getDerivedStateFromError in the commit phase; componentDidCatch in the render phase",
+      "Both run in the commit phase, after the DOM is updated",
+    ],
+    correctIndex: 1,
+    explanation:
+      "getDerivedStateFromError is called during the render phase — React needs it to know what to display. That is why it must be pure, with no side effects. componentDidCatch is called in the commit phase, once the DOM has already been updated with the fallback. This separation allows logging the error (commit) without blocking the fallback render.",
+  },
+  {
+    id: "eb-8",
+    question: "What does the second argument received by componentDidCatch contain?",
+    options: [
+      "The previous state of the component before the error",
+      "An ErrorInfo object with the componentStack property",
+      "The list of all components affected by the error",
+      "An object with reset() and retry() methods to control recovery",
+    ],
+    correctIndex: 1,
+    explanation:
+      "The second argument is an ErrorInfo object containing componentStack: a string with the component tree trace down to the one that threw. It is very useful for debugging and for enriching reports sent to monitoring services like Sentry, which can display that trace alongside the error.",
+  },
+  {
+    id: "eb-9",
+    question:
+      "Why does an Error Boundary seem to not work correctly in development with StrictMode?",
+    options: [
+      "StrictMode disables Error Boundaries to force the use of try/catch",
+      "React intentionally re-throws the error after catching it to detect unsafe side effects",
+      "StrictMode uses a different reconciliation algorithm that ignores boundaries",
+      "It is a known React bug that only affects development mode",
+    ],
+    correctIndex: 1,
+    explanation:
+      "In development, React re-throws the error after the Error Boundary catches it. This makes the error appear in the console and in overlays from tools like Create React App even though the boundary is working correctly. In production the behavior is as expected: the error stays caught and the fallback is shown without extra noise.",
+  },
+  {
+    id: "eb-10",
+    question:
+      "Which popular library abstracts Error Boundaries so they can be used declaratively in functional components?",
+    options: [
+      "react-query",
+      "react-error-boundary",
+      "react-suspense-boundary",
+      "react-safe-render",
+    ],
+    correctIndex: 1,
+    explanation:
+      "react-error-boundary by Brian Vaughn (now community-maintained) exposes an <ErrorBoundary> component with props like fallback, fallbackRender, and onError, plus a useErrorBoundary hook for throwing errors manually from functional components. It is the most widely adopted solution when you do not want to write a class manually.",
+  },
+]
+
 export const allQuizzes: Quiz[] = [
   {
     id: "fundamentos",
@@ -1528,6 +1665,14 @@ export const allQuizzes: Quiz[] = [
     description: "Compound Components pattern: private Context, subcomponents, and flexible APIs",
     difficulty: "advanced",
     questions: compoundComponentsQuestions,
+  },
+  {
+    id: "error-boundary",
+    label: "Error Boundary",
+    description:
+      "Error catching in React: getDerivedStateFromError, componentDidCatch, and recovery strategies",
+    difficulty: "advanced",
+    questions: errorBoundaryQuestions,
   },
 ]
 
