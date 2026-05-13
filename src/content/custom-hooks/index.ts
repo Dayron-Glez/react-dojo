@@ -40,5 +40,5 @@ export const allCustomHooks: CustomHook[] = [
 ]
 
 export const customHookIndex: Record<string, CustomHook> = Object.fromEntries(
-  allCustomHooks.map((h) => [h.id, h])
+  allCustomHooks.map((hook) => [hook.id, hook])
 )
