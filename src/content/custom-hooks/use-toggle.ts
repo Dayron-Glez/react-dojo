@@ -1,6 +1,19 @@
+import { useState, useCallback } from "react"
 import type { CustomHook } from "./types"
 
-export const useToggle: CustomHook = {
+// Real implementation — importable in tests
+export function useToggle(initialValue = false) {
+  const [value, setValue] = useState<boolean>(initialValue)
+
+  const toggle = useCallback(() => setValue((v) => !v), [])
+  const setTrue = useCallback(() => setValue(true), [])
+  const setFalse = useCallback(() => setValue(false), [])
+
+  return { value, toggle, setTrue, setFalse }
+}
+
+// Metadata — used by the app UI and Sandpack playground
+export const useToggleContent: CustomHook = {
   id: "useToggle",
   label: "useToggle",
   description:

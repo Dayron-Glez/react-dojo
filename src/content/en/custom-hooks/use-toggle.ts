@@ -1,6 +1,6 @@
 import type { CustomHook } from "@/content/custom-hooks/types"
 
-export const useToggle: CustomHook = {
+export const useToggleContent: CustomHook = {
   id: "useToggle",
   label: "useToggle",
   description:

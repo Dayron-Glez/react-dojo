@@ -4,7 +4,7 @@ import { useLocalStorage } from "./use-local-storage"
 import { useDebounce } from "./use-debounce"
 import { usePrevious } from "./use-previous"
 import { useMediaQuery } from "./use-media-query"
-import { useToggle } from "./use-toggle"
+import { useToggleContent } from "./use-toggle"
 import { useClickOutside } from "./use-click-outside"
 import { useClipboard } from "./use-clipboard"
 import { useWindowSize } from "./use-window-size"
@@ -26,7 +26,7 @@ export const allCustomHooks: CustomHook[] = [
   useDebounce,
   usePrevious,
   useMediaQuery,
-  useToggle,
+  useToggleContent,
   useClickOutside,
   useClipboard,
   useWindowSize,
