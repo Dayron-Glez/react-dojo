@@ -2,7 +2,7 @@ export type { CustomHook, HookCategory } from "@/content/custom-hooks/types"
 
 import { useLocalStorage } from "./use-local-storage"
 import { useDebounce } from "./use-debounce"
-import { usePrevious } from "./use-previous"
+import { usePreviousContent } from "./use-previous"
 import { useMediaQuery } from "./use-media-query"
 import { useToggleContent } from "./use-toggle"
 import { useClickOutside } from "./use-click-outside"
@@ -24,7 +24,7 @@ import type { CustomHook } from "@/content/custom-hooks/types"
 export const allCustomHooks: CustomHook[] = [
   useLocalStorage,
   useDebounce,
-  usePrevious,
+  usePreviousContent,
   useMediaQuery,
   useToggleContent,
   useClickOutside,

@@ -1,6 +1,6 @@
 import type { CustomHook } from "@/content/custom-hooks/types"
 
-export const usePrevious: CustomHook = {
+export const usePreviousContent: CustomHook = {
   id: "usePrevious",
   label: "usePrevious",
   description:
