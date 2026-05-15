@@ -1,6 +1,6 @@
 import type { CustomHook } from "@/content/custom-hooks/types"
 
-export const useCounter: CustomHook = {
+export const useCounterContent: CustomHook = {
   id: "useCounter",
   label: "useCounter",
   description:

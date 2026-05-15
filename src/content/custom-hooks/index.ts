@@ -14,7 +14,7 @@ import { useFetch } from "./use-fetch"
 import { useHover } from "./use-hover"
 import { useEventListener } from "./use-event-listener"
 import { useIntersectionObserver } from "./use-intersection-observer"
-import { useCounter } from "./use-counter"
+import { useCounterContent } from "./use-counter"
 import { useOnlineStatus } from "./use-online-status"
 import { useKeyPress } from "./use-key-press"
 import { useLongPress } from "./use-long-press"
@@ -34,7 +34,7 @@ export const allCustomHooks: CustomHook[] = [
   useHover,
   useEventListener,
   useIntersectionObserver,
-  useCounter,
+  useCounterContent,
   useOnlineStatus,
   useKeyPress,
   useLongPress,
