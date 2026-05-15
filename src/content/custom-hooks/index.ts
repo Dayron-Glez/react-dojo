@@ -3,9 +3,9 @@ export type { CustomHook, HookCategory } from "./types"
 
 import { useLocalStorage } from "./use-local-storage"
 import { useDebounce } from "./use-debounce"
-import { usePreviousContent } from "./use-previous"
+import { usePrevious } from "./use-previous"
 import { useMediaQuery } from "./use-media-query"
-import { useToggleContent } from "./use-toggle"
+import { useToggle } from "./use-toggle"
 import { useClickOutside } from "./use-click-outside"
 import { useClipboard } from "./use-clipboard"
 import { useWindowSize } from "./use-window-size"
@@ -14,7 +14,7 @@ import { useFetch } from "./use-fetch"
 import { useHover } from "./use-hover"
 import { useEventListener } from "./use-event-listener"
 import { useIntersectionObserver } from "./use-intersection-observer"
-import { useCounterContent } from "./use-counter"
+import { useCounter } from "./use-counter"
 import { useOnlineStatus } from "./use-online-status"
 import { useKeyPress } from "./use-key-press"
 import { useLongPress } from "./use-long-press"
@@ -23,9 +23,9 @@ import { useScrollPosition } from "./use-scroll-position"
 export const allCustomHooks: CustomHook[] = [
   useLocalStorage,
   useDebounce,
-  usePreviousContent,
+  usePrevious,
   useMediaQuery,
-  useToggleContent,
+  useToggle,
   useClickOutside,
   useClipboard,
   useWindowSize,
@@ -34,7 +34,7 @@ export const allCustomHooks: CustomHook[] = [
   useHover,
   useEventListener,
   useIntersectionObserver,
-  useCounterContent,
+  useCounter,
   useOnlineStatus,
   useKeyPress,
   useLongPress,

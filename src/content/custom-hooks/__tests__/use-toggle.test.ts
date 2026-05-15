@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react"
 import { describe, it, expect } from "vitest"
-import { useToggle } from "../use-toggle"
+import { useToggle } from "../use-toggle.fn"
 
 describe("useToggle", () => {
   it("initializes with false by default", () => {
