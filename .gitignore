@@ -26,3 +26,6 @@ dist-ssr
 tsconfig.tsbuildinfo
 tsconfig.tsbuildinfo
 next-env.d.ts
+
+# Test coverage
+coverage/
