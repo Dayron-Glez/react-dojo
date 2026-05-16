@@ -20,6 +20,8 @@ describe("useFetch", () => {
   })
 
   it("starts in the loading state", () => {
+    // Use a never-resolving fetch so no async state update fires after the assertion
+    vi.stubGlobal("fetch", vi.fn().mockReturnValue(new Promise(() => {})))
     const { result } = renderHook(() => useFetch("/api/test"))
     expect(result.current.loading).toBe(true)
     expect(result.current.data).toBeNull()
@@ -53,7 +55,10 @@ describe("useFetch", () => {
     const { result, rerender } = renderHook(({ url }) => useFetch(url), {
       initialProps: { url: "/api/first" },
     })
+    // Wait for the first fetch to settle before changing the URL
     await waitFor(() => expect(result.current.loading).toBe(false))
+    // Switch to a never-resolving fetch so the second request stays in loading
+    vi.stubGlobal("fetch", vi.fn().mockReturnValue(new Promise(() => {})))
     rerender({ url: "/api/second" })
     expect(result.current.loading).toBe(true)
     expect(result.current.data).toBeNull()
